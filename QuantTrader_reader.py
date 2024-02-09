@@ -57,22 +57,10 @@ if uploaded_file is not None:
     month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     combined_pivot_table = 100 * combined_pivot_table[month_order + ['Yearly']]  # Reorder columns to match month order
 
-    #formatted_combined_pivot_table = combined_pivot_table.applymap(lambda x: f"{x:.2f}%")
 
-# Assuming 'Year' is your first column name
+    formatted_combined_pivot_table = combined_pivot_table.applymap(lambda x: f"{x:.2f}%")
 
-    # Separate the first column and the rest
-    first_column = combined_pivot_table.iloc[:, :1]
-    rest_columns = combined_pivot_table.iloc[:, 1:]
-
-    # Apply formatting to all but the first column
-    formatted_rest_columns = rest_columns.applymap(lambda x: f"{x:.2f}%")
-
-    # Concatenate the first column with the formatted rest of the DataFrame
-    formatted_combined_pivot_table = pd.concat([first_column, formatted_rest_columns], axis=1)
 
     # Display the formatted DataFrame in Streamlit
     st.dataframe(formatted_combined_pivot_table, width=900, height=500)
 
-    # # Display the formatted DataFrame
-    # st.dataframe(formatted_combined_pivot_table, width=900, height=500)

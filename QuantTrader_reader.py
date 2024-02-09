@@ -28,25 +28,25 @@ with st.expander("Instructions"):
 
 
 if uploaded_file is not None:
-    nasdaq_data = pd.read_csv(uploaded_file)
+    strategy_data = pd.read_csv(uploaded_file)
 
     # Convert the 'Date' column to datetime format
-    nasdaq_data['Date'] = pd.to_datetime(nasdaq_data['Date'])
+    strategy_data['Date'] = pd.to_datetime(strategy_data['Date'])
 
     # Set the 'Date' column as the index of the DataFrame
-    nasdaq_data.set_index('Date', inplace=True)
+    strategy_data.set_index('Date', inplace=True)
 
     # Calculate monthly and yearly returns
-    nasdaq_monthly_returns = nasdaq_data['Return'].resample('M').last().pct_change()
-    nasdaq_yearly_returns = nasdaq_data['Return'].resample('Y').last().pct_change()
+    strategy_monthly_returns = strategy_data['Return'].resample('M').last().pct_change()
+    strategy_yearly_returns = strategy_data['Return'].resample('Y').last().pct_change()
 
     # Pivot tables for monthly and yearly returns
-    monthly_pivot = nasdaq_monthly_returns.reset_index()
+    monthly_pivot = strategy_monthly_returns.reset_index()
     monthly_pivot['Year'] = monthly_pivot['Date'].dt.year
     monthly_pivot['Month'] = monthly_pivot['Date'].dt.month_name().str[:3]
     monthly_pivot_table = monthly_pivot.pivot_table(index='Year', columns='Month', values='Return')
 
-    yearly_pivot = nasdaq_yearly_returns.reset_index()
+    yearly_pivot = strategy_yearly_returns.reset_index()
     yearly_pivot['Year'] = yearly_pivot['Date'].dt.year
     yearly_pivot_table = yearly_pivot.set_index('Year')['Return']
 
@@ -57,10 +57,7 @@ if uploaded_file is not None:
     month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     combined_pivot_table = 100 * combined_pivot_table[month_order + ['Yearly']]  # Reorder columns to match month order
 
-
     formatted_combined_pivot_table = combined_pivot_table.applymap(lambda x: f"{x:.2f}%")
-
 
     # Display the formatted DataFrame in Streamlit
     st.dataframe(formatted_combined_pivot_table, width=900, height=500)
-
